@@ -4,6 +4,7 @@ const express=require("express");
 const bodyParser=require('body-parser');
 const https=require('https');
 const request =require('request');
+require("dotenv").config();
 
 const app=express();
 
@@ -20,11 +21,11 @@ app.post("/",(req,res)=>{
   const email=req.body.email;
   
   mailchimp.setConfig({
-    apiKey: "9e96b70e7c57b6912f6c819cb73ac40c-us21",
-    server: "us21",
+    apiKey: process.env.api_key,
+    server: process.env.server_prefix,
   });
   
-  const listId = "5442537d10";
+  const listId = process.env.list_id;
   const subscribingUser = {
     firstName: Fname,
     lastName: Lname,
@@ -52,9 +53,3 @@ app.post("/",(req,res)=>{
   })
   
 app.listen(process.env.PORT || 3000,()=>{console.log("server live on 3000");})
-  
-// apikey
-// f16f998ac266c5ce3cbb59e081188a45-us21
-// 9e96b70e7c57b6912f6c819cb73ac40c-us21
-// list_id
-// 5442537d10
