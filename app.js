@@ -1,9 +1,6 @@
 const mailchimp = require("@mailchimp/mailchimp_marketing");
-const md5 = require("md5");
 const express=require("express");
 const bodyParser=require('body-parser');
-const https=require('https');
-const request =require('request');
 require("dotenv").config();
 
 const app=express();
@@ -16,27 +13,34 @@ app.get("/",(req,res)=>{
 })
 
 app.post("/",(req,res)=>{
+  
+  // security keys 
+  const api_key=process.env.api_key;
+  const server_prefix=process.env.server_prefix;
+  const list_id=process.env.list_id;
+
   const Fname=req.body.Fname;
   const Lname=req.body.Lname;
   const email=req.body.email;
   
-  mailchimp.setConfig({
-    apiKey: process.env.api_key,
-    server: process.env.server_prefix,
-  });
-  
-  const listId = process.env.list_id;
+  const listId = list_id;
+
   const subscribingUser = {
     firstName: Fname,
     lastName: Lname,
     email: email
   };
+
+  mailchimp.setConfig({
+    apiKey: api_key,
+    server: server_prefix,
+  });
   
   async function run() {
     try {
       var response = await mailchimp.lists.addListMember(listId, {
         email_address: subscribingUser.email,
-        status: "subscribed",
+        status: "pending",
         merge_fields: {
           FNAME: subscribingUser.firstName,
           LNAME: subscribingUser.lastName
@@ -45,7 +49,7 @@ app.post("/",(req,res)=>{
       res.sendFile(__dirname+'/success.html');
       
     } catch (error) {
-        console.log(error.status);
+        console.log(error);
         res.sendFile(__dirname+'/failure.html');
       }
     }
