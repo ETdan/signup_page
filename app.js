@@ -40,7 +40,7 @@ app.post("/",(req,res)=>{
     try {
       var response = await mailchimp.lists.addListMember(listId, {
         email_address: subscribingUser.email,
-        status: "pending",
+        status: "subscribed",
         merge_fields: {
           FNAME: subscribingUser.firstName,
           LNAME: subscribingUser.lastName
